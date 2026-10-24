@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 import { test } from 'node:test'
 import { TELEGRAM_TEXT_LIMIT } from '../lib/format.js'
 import { wireEvents } from '../lib/host.js'
-import { CHAT, fakeCtx, fakeSession, makeBridge, settle, sleep } from './harness.mjs'
+import { CHAT, fakeCtx, fakeHost, fakeSession, makeBridge, settle, sleep } from './harness.mjs'
 
 async function withTopic(env, sessionId = 'session-a') {
   await env.store.putTopic(sessionId, { chatId: CHAT, threadId: 300, name: 'ws · t', closed: false })
@@ -271,4 +271,49 @@ test('presented files are sent to the topic as documents', async (t) => {
   assert.equal(docs.length, 1)
   assert.equal(docs[0].params.document.name, 'report.txt')
   assert.equal(docs[0].params.caption, 'Report')
+})
+
+test('local images in an answer are sent as photos after the text, other paths are not', async (t) => {
+  const reads = []
+  const host = fakeHost({
+    async readFile(id, path) {
+      reads.push(path)
+      if (path.includes('missing')) throw new Error('ENOENT')
+      return Object.assign(new Blob(['png']), { name: path.split('/').pop() })
+    },
+  })
+  const env = await makeBridge({ host })
+  t.after(env.close)
+  await withTopic(env)
+  const text = [
+    'Tank:',
+    '![Tank, Compatible | High](<target/tmp/tank.png>)',
+    '![gone](target/tmp/missing.png) ![anim](a.gif) ![](https://x.test/r.png) ![key](/home/u/.ssh/id_rsa)',
+    '```',
+    '![in code](code.png)',
+    '```',
+  ].join('\n')
+  env.bridge.onAssistantMessage('session-a', { text, toolCalls: [] })
+  await settle(env, 'session-a')
+  assert.deepEqual(reads, ['target/tmp/tank.png', 'target/tmp/missing.png', 'a.gif'])
+  const photos = env.tg.callsOf('sendPhoto')
+  assert.equal(photos.length, 1)
+  assert.equal(photos[0].params.photo.name, 'tank.png')
+  assert.equal(photos[0].params.caption, 'Tank, Compatible | High')
+  assert.equal(env.tg.callsOf('sendDocument')[0].params.document.name, 'a.gif')
+  const message = env.tg.callsOf('sendMessage')[0].params.text
+  assert.match(message, /🖼 Tank, Compatible \| High/)
+  assert.doesNotMatch(message, /tank\.png/)
+  assert.ok(env.tg.calls.indexOf(photos[0]) > env.tg.calls.indexOf(env.tg.callsOf('sendMessage')[0]))
+})
+
+test('final-only output also sends embedded images', async (t) => {
+  const env = await makeBridge({ settings: { verbosity: 'final' } })
+  t.after(env.close)
+  await withTopic(env)
+  env.bridge.onTurnStarted('session-a')
+  env.bridge.onAssistantMessage('session-a', { text: 'see ![shot](shot.png)', toolCalls: [] })
+  env.bridge.onTurnEnded('session-a', { reason: 'completed' })
+  await settle(env, 'session-a')
+  assert.equal(env.tg.callsOf('sendPhoto').length, 1)
 })
