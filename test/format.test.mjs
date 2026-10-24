@@ -4,6 +4,8 @@ import {
   TELEGRAM_TEXT_LIMIT,
   escapeHtml,
   inlineToHtml,
+  markdownImages,
+  markdownToPlain,
   markdownToHtml,
   renderMarkdownMessages,
   splitMarkdown,
@@ -75,4 +77,13 @@ test('topicName joins workspace and title within 128 chars', () => {
   assert.equal(topicName('dsh-tg-bridge', ''), 'dsh-tg-bridge')
   assert.ok(topicName('w'.repeat(100), 't'.repeat(200)).length <= 128)
   assert.equal(truncate('abcdef', 4), 'abc…')
+})
+
+test('images render as a marker and are listed with their local paths', () => {
+  assert.equal(inlineToHtml('a ![Tank | High](<target/tmp/tank.png>) b'), 'a 🖼 Tank | High b')
+  assert.equal(markdownToPlain('![x](y.png "t")'), '🖼 x')
+  assert.deepEqual(markdownImages('![a](<dir with space/a.png>) ![b](b.png "t") ![c](http://h/c.png) `![d](d.png)`\n![a](<dir with space/a.png>)'), [
+    { alt: 'a', path: 'dir with space/a.png' },
+    { alt: 'b', path: 'b.png' },
+  ])
 })

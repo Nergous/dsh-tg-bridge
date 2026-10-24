@@ -101,7 +101,9 @@ text; the transcript is echoed in the topic. Without a transcriber the audio
 file is attached.
 
 Files the agent presents with the `present` tool are sent to the topic as
-documents.
+documents. Local images an answer embeds as `![caption](path)` (PNG, JPEG,
+WebP, GIF, BMP, SVG; up to 10 per answer) follow the answer as photos with
+the caption; the text shows `🖼 caption` in their place.
 
 ### Topic commands
 
