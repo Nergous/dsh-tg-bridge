@@ -12,6 +12,8 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 - Local images an answer embeds as `![caption](path)` are sent after it as
   photos with that caption (GIF, BMP and SVG, or a photo Telegram refuses, as
   files); the message text shows `🖼 caption` instead of the raw Markdown.
+- PNG, JPEG and WebP files the agent presents are sent as photos, falling
+  back to a document when Telegram refuses the photo.
 - `/new` in General without arguments shows the workspaces as buttons and
   then takes your next message (text, photo, file or voice) as the session's
   first prompt; "Start without a message", "Other workspace" and `/cancel`

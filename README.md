@@ -101,7 +101,8 @@ text; the transcript is echoed in the topic. Without a transcriber the audio
 file is attached.
 
 Files the agent presents with the `present` tool are sent to the topic as
-documents. Local images an answer embeds as `![caption](path)` (PNG, JPEG,
+documents; PNG, JPEG and WebP go as photos (as a document when Telegram
+refuses the photo). Local images an answer embeds as `![caption](path)` (PNG, JPEG,
 WebP, GIF, BMP, SVG; up to 10 per answer) follow the answer as photos with
 the caption; the text shows `🖼 caption` in their place.
 
@@ -165,7 +166,7 @@ All settings live on the plugin's settings page and apply without a restart.
 |---|---|---|
 | Approvals with buttons | on | Off sends approval requests only to the DSH GUI. |
 | Agent questions with buttons | on | Off sends agent questions only to the DSH GUI. |
-| Send files the agent presents | on | Forward `present` files as documents. |
+| Send files the agent presents | on | Forward `present` files: images as photos, the rest as documents. |
 | Steer prefix | `!` | Empty disables the prefix. |
 | Transcribe voice messages | on | Off attaches voice messages as audio files. |
 | Transcription command | empty | Shell command (POSIX `sh`); `{file}` is a 16 kHz mono WAV. Example: `whisper-cli -l ru -nt -f {file}`. Without it DSH speech-to-text is used when installed. |
