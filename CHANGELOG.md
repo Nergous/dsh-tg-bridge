@@ -26,9 +26,14 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
   Telegram.
 - Read reactions are back as an option: a delivered message gets 👀 (queued)
   or ⚡ (steer). Turn off with "React 👀 / ⚡ when a message is delivered".
-- "Send answer.md above, characters" sets when an answer goes as a preview
-  plus `answer.md` (default 3400); shorter answers that do not fit one
+- "Send answer.md above, characters" sets when an answer goes as a one-line
+  note plus `answer.md` (default 3400); shorter answers that do not fit one
   message are split into several messages.
+
+### Fixed
+
+- Bold and italic wrapped around inline code render instead of showing
+  the asterisks; links to local files show only their label.
 
 ## [0.2.0] - 2026-10-22
 

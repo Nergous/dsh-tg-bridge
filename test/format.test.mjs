@@ -87,3 +87,10 @@ test('images render as a marker and are listed with their local paths', () => {
     { alt: 'b', path: 'b.png' },
   ])
 })
+
+test('emphasis around inline code pairs up, local links keep only their label', () => {
+  assert.equal(inlineToHtml('**`Rng`:** added `range_i32`'), '<b><code>Rng</code>:</b> added <code>range_i32</code>')
+  assert.equal(inlineToHtml('`**not bold**` and `<b>`'), '<code>**not bold**</code> and <code>&lt;b&gt;</code>')
+  assert.equal(inlineToHtml('see [bridge.js](<lib/bridge.js#L24>), [`x`](/a/x.md) and [site](https://x.io)'), 'see bridge.js, <code>x</code> and <a href="https://x.io">site</a>')
+  assert.equal(markdownToPlain('[a](<p q.md>) [b](https://x.io)'), 'a b (https://x.io)')
+})

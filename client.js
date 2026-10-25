@@ -85,7 +85,7 @@ window.__ModuleLoader__.load({
       'f.mirrorGuiMessages': 'Mirror my DSH messages',
       'f.pinStatus': 'Pinned status card per topic',
       'f.answerFileChars': 'Send answer.md above, characters',
-      'f.answerFileChars.hint': 'Longer answers come as a short preview plus answer.md; shorter ones as one or more messages.',
+      'f.answerFileChars.hint': 'Longer answers come as a one-line note plus answer.md; shorter ones as one or more messages.',
       'f.createTopicOn': 'Create topic',
       'f.createTopicOn.first-message': 'On first message',
       'f.createTopicOn.agent-created': 'As soon as a session opens',
