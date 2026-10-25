@@ -106,7 +106,7 @@ test('text, tools, text keep their order as separate messages', async (t) => {
   assert.deepEqual(order, ['first', 'tools', 'second'])
 })
 
-test('a long answer becomes one preview message plus answer.md', async (t) => {
+test('a long answer becomes a one-line note plus answer.md', async (t) => {
   const env = await makeBridge()
   t.after(env.close)
   await withTopic(env)
@@ -115,8 +115,7 @@ test('a long answer becomes one preview message plus answer.md', async (t) => {
   await settle(env, 'session-a')
   const sends = env.tg.callsOf('sendMessage')
   assert.equal(sends.length, 1)
-  assert.ok(sends[0].params.text.length <= TELEGRAM_TEXT_LIMIT)
-  assert.match(sends[0].params.text, /^Line 0:[\s\S]*Full answer in answer\.md/)
+  assert.equal(sends[0].params.text, '📄 <i>Answer in answer.md</i>')
   const docs = env.tg.callsOf('sendDocument')
   assert.equal(docs.length, 1)
   assert.equal(docs[0].params.document.name, 'answer.md')
@@ -136,7 +135,7 @@ test('a streamed long answer edits one message and ends with answer.md', async (
   env.bridge.onAssistantMessage('session-a', { attemptKey: 'att-1', text: long, toolCalls: [] })
   await settle(env, 'session-a')
   assert.equal(env.tg.callsOf('sendMessage').length, 1)
-  assert.match(env.tg.callsOf('editMessageText').at(-1).params.text, /Full answer in answer\.md<\/i>$/)
+  assert.equal(env.tg.callsOf('editMessageText').at(-1).params.text, '📄 <i>Answer in answer.md</i>')
   assert.equal(env.tg.callsOf('sendDocument').length, 1)
 })
 

@@ -116,7 +116,7 @@ the caption; the text shows `🖼 caption` in their place.
 | `/compact` | Compact the conversation (when the session is idle). |
 | `/model [name]` | Show models as buttons, or switch to one by name. |
 | `/permission [ro\|write\|full]` | Show access (Read Only, Workspace Write, Full Access) as buttons, or switch. Alias `/access`. New sessions: `/new --ro\|--write\|--full <workspace> [prompt]`, or the buttons in the `/new` picker. |
-| `/verbosity full\|tools\|final` | Output detail for this topic only. Answers longer than one message arrive as a preview plus `answer.md`. |
+| `/verbosity full\|tools\|final` | Output detail for this topic only. Answers past the answer.md threshold arrive as a one-line note plus `answer.md`. |
 | `/mute`, `/unmute` | Pause or resume agent output in this topic. Approvals and questions still arrive. |
 | `/steer <text>` | Same as `!text`. |
 | `/help` | Command list. |
@@ -151,7 +151,7 @@ All settings live on the plugin's settings page and apply without a restart.
 | React 👀 / ⚡ when a message is delivered | on | Read reaction on your message: 👀 queued, ⚡ steer. |
 | Mirror my DSH messages | on | Show messages typed in DSH in the topic. |
 | Pinned status card per topic | on | Pin the topic's first message. |
-| Send answer.md above, characters | 3400 | Longer answers come as a preview plus `answer.md`; shorter ones as one or more messages. |
+| Send answer.md above, characters | 3400 | Longer answers come as a one-line note plus `answer.md`; shorter ones as one or more messages. |
 
 **Topics**
 
