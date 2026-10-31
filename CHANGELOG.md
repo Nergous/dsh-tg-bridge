@@ -7,6 +7,8 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-10-31
+
 ### Fixed
 
 - Mentions no longer show "you" for a user the bot has not heard from yet:
