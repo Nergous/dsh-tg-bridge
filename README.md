@@ -104,8 +104,8 @@ Whoever last sent the session work from Telegram is mentioned (@username, or
 a link with their name) on its approval prompts, the first question of a
 batch, and the end-of-turn line, so the notification reaches the person who
 is waiting. After a message typed in DSH the first allowed user is mentioned
-instead. Turn this off with **Mention me on approvals, questions and turn
-end**.
+instead. **Mention me** chooses when: on approvals, questions and turn end
+(default), only on approvals and questions, or never.
 
 Messages typed in DSH appear as `👤 You (DSH)`; their pictures follow as a
 photo, or an album when there are several (GIFs as files).
@@ -162,7 +162,7 @@ All settings live on the plugin's settings page and apply without a restart.
 | Output detail | tools collapsed | Everything with tools expanded, tools collapsed, or final answers only. `/verbosity` overrides it per topic. |
 | Stream answers live | on | Edit one message while the model writes. Off sends the answer when it is complete. |
 | Notify when a turn ends | on | `✅ Done` line with sound. Everything else is silent. |
-| Mention me on approvals, questions and turn end | on | @-mention the user who sent the request (from Telegram), or the first allowed user (typed in DSH). |
+| Mention me | on approvals, questions and turn end | Or only on approvals and questions, or never. @-mentions the user who sent the request (from Telegram), or the first allowed user (typed in DSH). |
 | Show "typing…" while working | on | Telegram typing indicator during a turn. |
 | React 👀 / ⚡ when a message is delivered | on | Read reaction on your message: 👀 queued, ⚡ steer. |
 | Mirror my DSH messages | on | Show messages typed in DSH in the topic. |

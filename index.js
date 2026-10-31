@@ -11,7 +11,7 @@
 import { isAbsolute, join, dirname } from 'node:path'
 import { createRequire } from 'node:module'
 import { pathToFileURL } from 'node:url'
-import { Bridge, DEFAULT_SETTINGS, VERBOSITY } from './lib/bridge.js'
+import { Bridge, DEFAULT_SETTINGS, MENTION_MODES, VERBOSITY } from './lib/bridge.js'
 import { BridgeStore, DOMAIN, memoryDomain } from './lib/store.js'
 import { approvalPreview, createHost, isRootSession, wireEvents } from './lib/host.js'
 import { createBotApi } from './lib/telegram/api.js'
@@ -61,7 +61,7 @@ export function buildConfig(z) {
     streaming: bool(D.streaming),
     streamIntervalMs: num(D.streamIntervalMs, 800, 60000),
     notifyOnTurnEnd: bool(D.notifyOnTurnEnd),
-    mentionUser: bool(D.mentionUser),
+    mentionOn: oneOf(...MENTION_MODES).default(D.mentionOn).volatile(),
     typingIndicator: bool(D.typingIndicator),
     readReactions: bool(D.readReactions),
     mirrorGuiMessages: bool(D.mirrorGuiMessages),
@@ -120,6 +120,9 @@ export function resolveConfig(config) {
   out.chatId = Number(out.chatId) || 0
   out.allowedUserIds = (Array.isArray(out.allowedUserIds) ? out.allowedUserIds : []).map(Number).filter(Number.isSafeInteger)
   if (!VERBOSITY.includes(out.verbosity)) out.verbosity = DEFAULTS.verbosity
+  // 0.3.x had an on/off `mentionUser`; off still means never.
+  if (raw.mentionOn === undefined && raw.mentionUser === false) out.mentionOn = 'never'
+  if (!MENTION_MODES.includes(out.mentionOn)) out.mentionOn = DEFAULTS.mentionOn
   out.allowedUserIds = out.allowedUserIds.filter((id) => id > 0)
   // The token reference names a Telegram credential only, so a settings
   // change cannot make the plugin read (and send to apiBaseUrl) another secret.

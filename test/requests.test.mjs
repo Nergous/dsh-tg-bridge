@@ -87,13 +87,36 @@ test('pressing a button remembers the user too', async (t) => {
 })
 
 test('mentions can be turned off', async (t) => {
-  const env = await env0(t, { settings: { mentionUser: false } })
+  const env = await env0(t, { settings: { mentionOn: 'never' } })
   await env.bridge.handleUpdate(topicMessage(300, 'go', { from }))
   await env.bridge.requestQuestions('session-a', [{ id: 'q', question: 'Continue?', options: [{ label: 'Yes' }] }])
   env.bridge.onTurnStarted('session-a')
   env.bridge.onTurnEnded('session-a', { reason: 'completed' })
   await settle(env, 'session-a')
   for (const call of env.tg.callsOf('sendMessage')) assert.doesNotMatch(call.params.text, /@owner_tg|tg:\/\/user/)
+})
+
+test('"only on approvals and questions" leaves the end-of-turn line without a mention', async (t) => {
+  const env = await env0(t, { settings: { mentionOn: 'prompts' } })
+  await env.bridge.handleUpdate(topicMessage(300, 'go', { from }))
+  await env.bridge.requestApproval('session-a', { toolName: 'bash' })
+  await env.bridge.requestQuestions('session-a', [{ id: 'q', question: 'Continue?', options: [{ label: 'Yes' }] }])
+  env.bridge.onTurnStarted('session-a')
+  env.bridge.onTurnEnded('session-a', { reason: 'completed' })
+  await settle(env, 'session-a')
+  const texts = env.tg.callsOf('sendMessage').map((call) => call.params.text)
+  assert.match(texts.find((text) => /Approval needed/.test(text)), /@owner_tg$/)
+  assert.match(texts.find((text) => /Continue\?/.test(text)), /@owner_tg$/)
+  assert.match(texts.find((text) => /✅ Done/.test(text)), /^✅ Done · \d+s$/)
+})
+
+test('resolveConfig maps the old on/off mentionUser to mentionOn', async () => {
+  const { resolveConfig } = await import('../index.js')
+  assert.equal(resolveConfig({}).mentionOn, 'always')
+  assert.equal(resolveConfig({ mentionUser: false }).mentionOn, 'never')
+  assert.equal(resolveConfig({ mentionUser: true }).mentionOn, 'always')
+  assert.equal(resolveConfig({ mentionUser: false, mentionOn: 'prompts' }).mentionOn, 'prompts')
+  assert.equal(resolveConfig({ mentionOn: 'sometimes' }).mentionOn, 'always')
 })
 
 test('the first question of a batch mentions the requester', async (t) => {
