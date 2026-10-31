@@ -7,6 +7,15 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-10-31
+
+### Changed
+
+- "Mention me on approvals, questions and turn end" (on/off) becomes
+  **Mention me** with three choices: on approvals, questions and turn end
+  (default), only on approvals and questions, or never. A setting that was
+  turned off stays off (never).
+
 ## [0.3.1] - 2026-10-31
 
 ### Fixed
