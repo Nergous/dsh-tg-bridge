@@ -7,6 +7,16 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-10-31
+
+### Changed
+
+- The repository is renamed to `dsh-tg-bridge`; install with
+  `github:Nergous/dsh-tg-bridge`.
+- Answers longer than "Send answer.md above, characters" arrive as a one-line
+  `📄 Answer in answer.md` note plus the whole answer as `answer.md`, instead
+  of a long run of messages.
+
 ### Added
 
 - Approval prompts, the first question of an `ask_user_question` batch and
@@ -23,6 +33,11 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
   files); the message text shows `🖼 caption` instead of the raw Markdown.
 - PNG, JPEG and WebP files the agent presents are sent as photos, falling
   back to a document when Telegram refuses the photo.
+- `/permission [ro|write|full]` (alias `/access`) in a topic shows the
+  session's access — Read Only, Workspace Write, Full Access — as buttons, or
+  switches it directly; `/status` shows the current access. New sessions take
+  `--ro`, `--write` or `--full` (`/new --full <workspace> [prompt]`), and the
+  `/new` picker offers the same choice as buttons.
 - `/new` in General without arguments shows the workspaces as buttons and
   then takes your next message (text, photo, file or voice) as the session's
   first prompt; "Start without a message", "Other workspace" and `/cancel`

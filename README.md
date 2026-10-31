@@ -16,8 +16,9 @@ the same conversation.
   exactly like a message typed in the DSH composer.
 - **Agent output.** Answers stream live into one message that is edited as the
   model writes. Tool calls are collapsed into one expandable block per run of
-  tools. While the agent works the topic shows "typing…"; when a turn ends, a
-  notifying `✅ Done` line arrives.
+  tools. Long answers arrive as `answer.md`; images the agent embeds or
+  presents arrive as photos. While the agent works the topic shows "typing…";
+  when a turn ends, a notifying `✅ Done` line arrives.
 - **Subagents.** Subagents never create topics. Each one shows as a single
   line in its parent's topic: "working, waiting for result ⏳", then
   "done ✅" (or failed ❌ / cancelled ⏹).
@@ -27,8 +28,8 @@ the same conversation.
   question answered in DSH shows the chosen answer in the topic. Approvals,
   questions and the end-of-turn line mention (@) whoever sent the request
   from Telegram, or the first allowed user for requests typed in DSH.
-- **Commands.** `/stop`, `/status`, `/diff`, `/compact`, `/model` and more in
-  a session topic; `/sessions`, `/workspaces` and `/new` in General. Other DSH
+- **Commands.** `/stop`, `/status`, `/diff`, `/compact`, `/model`,
+  `/permission` and more in a session topic; `/sessions`, `/workspaces` and `/new` in General. Other DSH
   slash commands work too.
 - **Pinned status card.** The first message of each topic (workspace, path,
   session id, model) is pinned.
@@ -98,6 +99,16 @@ Write in a session's topic to talk to that session. Messages queue behind the
 running turn, as in DSH. Start a message with `!` to steer the running turn
 instead. While the agent waits for an answer to a question, your next text
 message answers it.
+
+Whoever last sent the session work from Telegram is mentioned (@username, or
+a link with their name) on its approval prompts, the first question of a
+batch, and the end-of-turn line, so the notification reaches the person who
+is waiting. After a message typed in DSH the first allowed user is mentioned
+instead. Turn this off with **Mention me on approvals, questions and turn
+end**.
+
+Messages typed in DSH appear as `👤 You (DSH)`; their pictures follow as a
+photo, or an album when there are several (GIFs as files).
 
 Photos are attached as images (when the model accepts images), documents as
 files (up to **Max download, MB**). Voice messages are transcribed and sent as
@@ -221,8 +232,11 @@ The plugin runs inside the DSH host process.
   The DSH GUI shows the prompt at once; Telegram never delays it.
 - Root sessions are told apart from subagents by the session header
   (`origin: 'subagent'`). Subagent approvals are shown in the root topic.
-- The session-to-topic map and the polling offset are stored in a DSH storage
-  domain (`~/.dsh/storages/telegram_bridge.json`).
+- The session-to-topic map (with each session's last Telegram requester), the
+  polling offset and the names of allowed users (for mentions) are stored in a
+  DSH storage domain (`~/.dsh/storages/telegram_bridge.json`).
+- Pictures of DSH messages are read back from DSH attachment storage
+  (`attachments` service).
 
 ## Security
 

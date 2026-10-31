@@ -1,6 +1,6 @@
 {
   "name": "@nergous/dsh-telegram-bridge",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "DeepSeek Harness plugin: every DSH session becomes a Telegram forum topic, mirrored both ways, with approvals, questions, commands, files and voice",
   "license": "MIT",
   "author": "Nergous",
