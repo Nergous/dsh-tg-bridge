@@ -9,6 +9,15 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ### Added
 
+- Approval prompts, the first question of an `ask_user_question` batch and
+  the end-of-turn line (`✅ Done`, `⏹ Stopped`, `⚠️ Turn failed`) mention the
+  Telegram user who sent the session's latest request; for a request typed in
+  DSH, the first allowed user. Turn off with "Mention me on approvals,
+  questions and turn end".
+- A question answered in DSH shows the chosen answer in Telegram instead of
+  only "Answered in DSH".
+- Pictures attached to a message typed in DSH are sent to the topic after its
+  text: one as a photo, several as an album (GIFs as files).
 - Local images an answer embeds as `![caption](path)` are sent after it as
   photos with that caption (GIF, BMP and SVG, or a photo Telegram refuses, as
   files); the message text shows `🖼 caption` instead of the raw Markdown.

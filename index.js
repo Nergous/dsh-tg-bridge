@@ -61,6 +61,7 @@ export function buildConfig(z) {
     streaming: bool(D.streaming),
     streamIntervalMs: num(D.streamIntervalMs, 800, 60000),
     notifyOnTurnEnd: bool(D.notifyOnTurnEnd),
+    mentionUser: bool(D.mentionUser),
     typingIndicator: bool(D.typingIndicator),
     readReactions: bool(D.readReactions),
     mirrorGuiMessages: bool(D.mirrorGuiMessages),
@@ -535,7 +536,10 @@ export function apply(ctx, config) {
       answerOf: (handle) => handle.answer.then((answers) => (answers ? { answers } : undefined)),
     })
     if (winner.from === 'telegram') withdraw.abort(new Error('answered in Telegram'))
-    else {
+    else if (winner.from === 'gui' && Array.isArray(winner.value?.answers)) {
+      const answers = winner.value.answers
+      prompt.then((handle) => handle?.answered(answers, 'Answered in DSH'))
+    } else {
       // A timed question that ran out stays answerable in DSH, not here.
       const via = winner.from === 'gui' ? 'Answered in DSH' : request.wait !== undefined ? 'No answer in time here — answer it in DSH' : 'Cancelled'
       prompt.then((handle) => handle?.cancel(via))

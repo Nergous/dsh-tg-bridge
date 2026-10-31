@@ -142,5 +142,5 @@ test('ask_user_question answered in the GUI withdraws the Telegram prompt', asyn
   await sleep(100)
   answer({ answers: [{ id: 'q', selected: ['Yes'] }] })
   assert.deepEqual(await result, { answers: [{ id: 'q', selected: ['Yes'] }] })
-  await env.tg.waitFor((calls) => calls.some((call) => call.method === 'editMessageText' && /Answered in DSH/.test(call.params.text)))
+  await env.tg.waitFor((calls) => calls.some((call) => call.method === 'editMessageText' && /<b>Answer:<\/b> Yes\n<i>Answered in DSH<\/i>/.test(call.params.text)))
 })

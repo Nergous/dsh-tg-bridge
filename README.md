@@ -10,7 +10,8 @@ the same conversation.
 - **One session, one topic.** Each root session gets a topic named
   `workspace · session title`. It is renamed when DSH titles the session,
   closed when you archive it, and reopened when you restore it.
-- **Both directions.** Messages you type in DSH appear in the topic. Text,
+- **Both directions.** Messages you type in DSH appear in the topic, with
+  their pictures as photos (several as an album). Text,
   photos, files and voice messages you send in the topic go into the session
   exactly like a message typed in the DSH composer.
 - **Agent output.** Answers stream live into one message that is edited as the
@@ -22,7 +23,10 @@ the same conversation.
   "done ✅" (or failed ❌ / cancelled ⏹).
 - **Approvals and questions.** Approval requests and `ask_user_question`
   prompts arrive with inline buttons. Telegram and the DSH GUI race: whichever
-  answers first wins, and the prompt on the other side is withdrawn.
+  answers first wins, and the prompt on the other side is withdrawn; a
+  question answered in DSH shows the chosen answer in the topic. Approvals,
+  questions and the end-of-turn line mention (@) whoever sent the request
+  from Telegram, or the first allowed user for requests typed in DSH.
 - **Commands.** `/stop`, `/status`, `/diff`, `/compact`, `/model` and more in
   a session topic; `/sessions`, `/workspaces` and `/new` in General. Other DSH
   slash commands work too.
@@ -147,6 +151,7 @@ All settings live on the plugin's settings page and apply without a restart.
 | Output detail | tools collapsed | Everything with tools expanded, tools collapsed, or final answers only. `/verbosity` overrides it per topic. |
 | Stream answers live | on | Edit one message while the model writes. Off sends the answer when it is complete. |
 | Notify when a turn ends | on | `✅ Done` line with sound. Everything else is silent. |
+| Mention me on approvals, questions and turn end | on | @-mention the user who sent the request (from Telegram), or the first allowed user (typed in DSH). |
 | Show "typing…" while working | on | Telegram typing indicator during a turn. |
 | React 👀 / ⚡ when a message is delivered | on | Read reaction on your message: 👀 queued, ⚡ steer. |
 | Mirror my DSH messages | on | Show messages typed in DSH in the topic. |
