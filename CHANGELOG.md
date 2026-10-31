@@ -7,6 +7,13 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ## [Unreleased]
 
+### Fixed
+
+- Mentions no longer show "you" for a user the bot has not heard from yet:
+  the name and username are asked from Telegram (`getChatMember`) and kept.
+  Button presses also record them, and a message sent right after DSH starts
+  is no longer forgotten. A failed lookup is retried after 10 minutes.
+
 ## [0.3.0] - 2026-10-31
 
 ### Changed

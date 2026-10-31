@@ -17,6 +17,8 @@ export async function startFakeTelegram({ chatId = -1001234567890 } = {}) {
   let messageId = 1
   let threadId = 100
   const messages = new Map()
+  /** user id -> profile fields getChatMember returns (first_name, username...) */
+  const members = new Map()
 
   const result = (method, params) => {
     switch (method) {
@@ -25,7 +27,7 @@ export async function startFakeTelegram({ chatId = -1001234567890 } = {}) {
       case 'getChat':
         return { id: Number(params.chat_id), type: 'supergroup', title: 'Fake Group', is_forum: true }
       case 'getChatMember':
-        return { status: 'administrator', can_manage_topics: true, user: { id: Number(params.user_id) } }
+        return { status: 'administrator', can_manage_topics: true, user: { id: Number(params.user_id), ...members.get(Number(params.user_id)) } }
       case 'getUpdates': {
         const offset = Number(params.offset ?? 0)
         while (updates.length > 0 && updates[0].update_id < offset) updates.shift()
@@ -121,6 +123,7 @@ export async function startFakeTelegram({ chatId = -1001234567890 } = {}) {
     chatId,
     calls,
     messages,
+    members,
     get lastUpdateId() {
       return updateId
     },

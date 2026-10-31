@@ -42,6 +42,50 @@ test('a request typed in DSH mentions the first allowed user by link', async (t)
   assert.match(prompt.params.text, new RegExp(`<a href="tg://user\\?id=${OWNER}">Owner</a>$`))
 })
 
+test('an unknown user is looked up with getChatMember once and remembered', async (t) => {
+  const env = await env0(t)
+  env.tg.members.set(OWNER, { first_name: 'Ivan', username: 'ivan_tg' })
+  await env.bridge.requestApproval('session-a', { toolName: 'bash' })
+  await env.bridge.requestApproval('session-a', { toolName: 'bash' })
+  const prompts = env.tg.callsOf('sendMessage').filter((call) => /Approval needed/.test(call.params.text))
+  assert.match(prompts[0].params.text, /\n@ivan_tg$/)
+  assert.match(prompts[1].params.text, /\n@ivan_tg$/)
+  const lookups = env.tg.callsOf('getChatMember')
+  assert.equal(lookups.length, 1)
+  assert.equal(Number(lookups[0].params.user_id), OWNER)
+  assert.equal(Number(lookups[0].params.chat_id), CHAT)
+  assert.deepEqual(env.store.state('users')[OWNER], { username: 'ivan_tg', name: 'Ivan' })
+})
+
+test('a user without a username is mentioned by the name Telegram returns', async (t) => {
+  const env = await env0(t)
+  env.tg.members.set(OWNER, { first_name: 'Ivan', last_name: 'Petrov' })
+  await env.bridge.requestApproval('session-a', { toolName: 'bash' })
+  const prompt = env.tg.callsOf('sendMessage').find((call) => /Approval needed/.test(call.params.text))
+  assert.match(prompt.params.text, new RegExp(`<a href="tg://user\\?id=${OWNER}">Ivan Petrov</a>$`))
+})
+
+test('a failed lookup falls back to "you" and is not retried right away', async (t) => {
+  const env = await env0(t)
+  env.tg.failNext('getChatMember', { error_code: 400, description: 'Bad Request: user not found' })
+  await env.bridge.requestApproval('session-a', { toolName: 'bash' })
+  await env.bridge.requestApproval('session-a', { toolName: 'bash' })
+  const prompts = env.tg.callsOf('sendMessage').filter((call) => /Approval needed/.test(call.params.text))
+  assert.equal(prompts.length, 2)
+  for (const prompt of prompts) assert.match(prompt.params.text, />you<\/a>$/)
+  assert.equal(env.tg.callsOf('getChatMember').length, 1)
+})
+
+test('pressing a button remembers the user too', async (t) => {
+  const env = await env0(t)
+  const handle = await env.bridge.requestQuestions('session-a', [{ id: 'q', question: 'Go?', options: [{ label: 'Yes' }] }])
+  void handle
+  const button = env.tg.callsOf('sendMessage').at(-1).params.reply_markup.inline_keyboard[0][0]
+  await env.bridge.handleUpdate({ callback_query: { id: 'cb1', data: button.callback_data, from: { id: OWNER, is_bot: false, first_name: 'Ivan', username: 'ivan_btn' }, message: { message_id: 1, chat: { id: CHAT } } } })
+  await settle(env, 'session-a')
+  assert.equal(env.store.state('users')[OWNER].username, 'ivan_btn')
+})
+
 test('mentions can be turned off', async (t) => {
   const env = await env0(t, { settings: { mentionUser: false } })
   await env.bridge.handleUpdate(topicMessage(300, 'go', { from }))
