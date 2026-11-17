@@ -39,11 +39,15 @@ export function fakeHost(extra = {}) {
       return { stat: ' a.js | 2 +-', patch: 'diff --git a/a.js b/a.js\n-old\n+new\n' }
     },
     async listModels() {
-      return [{ id: 'p/m1', provider: 'p', model: 'm1', label: 'Model One' }, { id: 'p/m2', provider: 'p', model: 'm2', label: 'Model Two' }]
+      return [
+        { id: 'p/m1', provider: 'p', model: 'm1', label: 'Model One', efforts: [] },
+        { id: 'p/m2', provider: 'p', model: 'm2', label: 'Model Two', efforts: [] },
+        { id: 'p/m3', provider: 'p', model: 'm3', label: 'Model Three', efforts: [{ id: 'low', name: 'Low' }, { id: 'high', name: 'High' }], defaultEffort: 'high' },
+      ]
     },
-    async setModel(id, target) {
-      calls.push({ op: 'setModel', id, target })
-      return target === 'p/m2' || target === 'm2' ? 'Model Two' : 'Model One'
+    async setModel(id, target, effort) {
+      calls.push({ op: 'setModel', id, target, ...(effort ? { effort } : {}) })
+      return { 'p/m2': 'Model Two', m2: 'Model Two', 'p/m3': 'Model Three' }[target] ?? 'Model One'
     },
     permission: 'workspace-write',
     async permissions() {

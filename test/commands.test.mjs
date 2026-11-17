@@ -62,12 +62,29 @@ test('/model lists models as buttons; a button press switches', async (t) => {
   await env.bridge.handleUpdate(topicMessage(300, '/model'))
   const call = env.tg.callsOf('sendMessage').at(-1)
   const keyboard = call.params.reply_markup.inline_keyboard
-  assert.equal(keyboard.length, 2)
+  assert.equal(keyboard.length, 3)
   assert.match(keyboard[0][0].text, /Model One ✓/)
   await env.bridge.handleUpdate({ callback_query: { id: 'cb1', from: { id: OWNER }, message: { message_id: 1, chat: { id: CHAT } }, data: keyboard[1][0].callback_data } })
   assert.deepEqual(env.host.calls.at(-1), { op: 'setModel', id: 'session-a', target: 'p/m2' })
   await settle(env)
   assert.match(lastText(env), /Model set to <b>Model Two<\/b>/)
+})
+
+test('/model button on a model with efforts asks for the effort first', async (t) => {
+  const env = await env0(t)
+  await env.bridge.handleUpdate(topicMessage(300, '/model'))
+  const keyboard = env.tg.callsOf('sendMessage').at(-1).params.reply_markup.inline_keyboard
+  const press = (data) => env.bridge.handleUpdate({ callback_query: { id: 'cb', from: { id: OWNER }, message: { message_id: 1, chat: { id: CHAT } }, data } })
+  await press(keyboard[2][0].callback_data)
+  assert.ok(!env.host.calls.some((call) => call.op === 'setModel'))
+  const edit = env.tg.callsOf('editMessageText').at(-1)
+  assert.match(edit.params.text, /Model Three/)
+  const efforts = edit.params.reply_markup.inline_keyboard
+  assert.deepEqual(efforts.map((row) => row[0].text), ['Low', 'High (default)'])
+  await press(efforts[0][0].callback_data)
+  assert.deepEqual(env.host.calls.at(-1), { op: 'setModel', id: 'session-a', target: 'p/m3', effort: 'low' })
+  await settle(env)
+  assert.match(lastText(env), /Model set to <b>Model Three · Low<\/b>/)
 })
 
 test('/model <name> switches directly', async (t) => {

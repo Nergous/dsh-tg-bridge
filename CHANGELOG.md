@@ -7,6 +7,12 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ## [Unreleased]
 
+### Added
+
+- `/model` buttons: picking a model that has reasoning efforts shows a
+  second row of buttons to choose the effort (the provider default is
+  marked). `/model` also shows the current effort.
+
 ## [0.4.0] - 2026-10-31
 
 ### Changed
