@@ -129,7 +129,7 @@ the caption; the text shows `🖼 caption` in their place.
 | `/status` | Workspace, state, model, context use, output mode. |
 | `/diff` | `git diff --stat` of the session's directory, full patch as a file. |
 | `/compact` | Compact the conversation (when the session is idle). |
-| `/model [name]` | Show models as buttons, or switch to one by name. |
+| `/model [name]` | Show models as buttons (then reasoning effort, when the model has one), or switch to one by name. |
 | `/permission [ro\|write\|full]` | Show access (Read Only, Workspace Write, Full Access) as buttons, or switch. Alias `/access`. New sessions: `/new --ro\|--write\|--full <workspace> [prompt]`, or the buttons in the `/new` picker. |
 | `/verbosity full\|tools\|final` | Output detail for this topic only. Answers past the answer.md threshold arrive as a one-line note plus `answer.md`. |
 | `/mute`, `/unmute` | Pause or resume agent output in this topic. Approvals and questions still arrive. |
